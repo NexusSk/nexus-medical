@@ -1,9 +1,9 @@
 {
-  "name": "medx-biotech",
+  "name": "nexus-medical",
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "homepage": "https://github.com/USERNAME/medx-biotech",
+  "homepage": "https://samuel907.github.io/nexus-medical",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
