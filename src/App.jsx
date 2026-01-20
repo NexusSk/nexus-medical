@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback, memo, lazy, Suspense } from 'react'
+import { useEffect, useState, useRef, memo } from 'react'
 import Lenis from 'lenis'
 import Scene3D from './components/Scene3D'
 import Navbar from './components/Navbar'
@@ -9,12 +9,6 @@ import Contact from './components/Contact'
 import Modal, { DemoContent, ContactFormContent, SuccessContent, StoryContent } from './components/Modal'
 import { useLanguage } from './context/LanguageContext'
 import './App.css'
-
-// Global scroll state that Scene3D can read without React re-renders
-export const scrollState = {
-  progress: 0,
-  velocity: 0
-}
 
 function App() {
   const lenisRef = useRef(null)
@@ -44,12 +38,6 @@ function App() {
       touchMultiplier: 1.5,
       lerp: 0.075, // Very smooth lerp factor
       infinite: false,
-    })
-
-    // Track velocity for 3D objects - using global state to avoid React re-renders
-    lenisRef.current.on('scroll', ({ velocity, progress }) => {
-      scrollState.progress = progress
-      scrollState.velocity = velocity
     })
 
     function raf(time) {

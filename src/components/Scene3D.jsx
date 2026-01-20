@@ -1,10 +1,9 @@
-import { useRef, useMemo, memo, useEffect } from 'react'
-import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { useRef, useMemo, memo } from 'react'
+import { Canvas, useFrame } from '@react-three/fiber'
 import { Float, Sparkles, AdaptiveDpr, AdaptiveEvents } from '@react-three/drei'
 import * as THREE from 'three'
-import { scrollState } from '../App'
 
-// Pill capsule - optimized geometry (reduced segments)
+// Pill capsule - optimized geometry
 const SinglePill = memo(function SinglePill({ position, rotation, scale = 1, color = '#00c853', speed = 1 }) {
   const groupRef = useRef()
   const time = useRef(Math.random() * 100)
@@ -21,24 +20,20 @@ const SinglePill = memo(function SinglePill({ position, rotation, scale = 1, col
   const radius = 0.3
   const bodyLength = 0.6
 
-  // Memoized material to prevent recreation
   const material = useMemo(() => (
     <meshStandardMaterial color={color} metalness={0.5} roughness={0.2} />
   ), [color])
 
   return (
     <group ref={groupRef} position={position} rotation={rotation} scale={scale}>
-      {/* Top hemisphere - reduced segments for performance */}
       <mesh position={[0, bodyLength / 2, 0]}>
         <sphereGeometry args={[radius, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2]} />
         {material}
       </mesh>
-      {/* Body cylinder - reduced segments */}
       <mesh>
         <cylinderGeometry args={[radius, radius, bodyLength, 16]} />
         {material}
       </mesh>
-      {/* Bottom hemisphere - reduced segments */}
       <mesh position={[0, -bodyLength / 2, 0]} rotation={[Math.PI, 0, 0]}>
         <sphereGeometry args={[radius, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2]} />
         {material}
@@ -47,16 +42,15 @@ const SinglePill = memo(function SinglePill({ position, rotation, scale = 1, col
   )
 })
 
-// DNA Helix - optimized with reduced segments
+// DNA Helix
 const DNAHelix = memo(function DNAHelix({ position = [0, 0, 0], scale = 1 }) {
   const groupRef = useRef()
   
-  // Reduced segments for better performance
   const helixPoints = useMemo(() => {
     const points1 = []
     const points2 = []
     const connectors = []
-    const segments = 40 // Reduced from 60
+    const segments = 40
     
     for (let i = 0; i < segments; i++) {
       const t = i / segments
@@ -76,7 +70,7 @@ const DNAHelix = memo(function DNAHelix({ position = [0, 0, 0], scale = 1 }) {
         Math.sin(angle + Math.PI) * radius
       ))
       
-      if (i % 5 === 0) { // Reduced connector frequency
+      if (i % 5 === 0) {
         connectors.push({
           start: points1[points1.length - 1].clone(),
           end: points2[points2.length - 1].clone()
@@ -96,7 +90,6 @@ const DNAHelix = memo(function DNAHelix({ position = [0, 0, 0], scale = 1 }) {
   const curve1 = useMemo(() => new THREE.CatmullRomCurve3(helixPoints.points1), [helixPoints])
   const curve2 = useMemo(() => new THREE.CatmullRomCurve3(helixPoints.points2), [helixPoints])
 
-  // Memoized connector components
   const connectorElements = useMemo(() => helixPoints.connectors.map((connector, i) => {
     const midPoint = connector.start.clone().add(connector.end).multiplyScalar(0.5)
     const direction = connector.end.clone().sub(connector.start)
@@ -126,12 +119,10 @@ const DNAHelix = memo(function DNAHelix({ position = [0, 0, 0], scale = 1 }) {
 
   return (
     <group ref={groupRef} position={position} scale={scale}>
-      {/* Helix strand 1 - reduced tubular segments */}
       <mesh>
         <tubeGeometry args={[curve1, 60, 0.08, 8, false]} />
         <meshStandardMaterial color="#00c853" emissive="#00c853" emissiveIntensity={0.2} metalness={0.3} roughness={0.4} />
       </mesh>
-      {/* Helix strand 2 - reduced tubular segments */}
       <mesh>
         <tubeGeometry args={[curve2, 60, 0.08, 8, false]} />
         <meshStandardMaterial color="#10b981" emissive="#10b981" emissiveIntensity={0.2} metalness={0.3} roughness={0.4} />
@@ -141,7 +132,7 @@ const DNAHelix = memo(function DNAHelix({ position = [0, 0, 0], scale = 1 }) {
   )
 })
 
-// Molecule structure - optimized
+// Molecule structure
 const Molecule = memo(function Molecule({ position, scale = 1 }) {
   const groupRef = useRef()
 
@@ -161,7 +152,6 @@ const Molecule = memo(function Molecule({ position, scale = 1 }) {
     { pos: [0, 0, -0.9], size: 0.28, color: '#00c853' },
   ], [])
 
-  // Pre-compute bond data
   const bondElements = useMemo(() => {
     const bonds = [
       { from: 0, to: 1 },
@@ -212,7 +202,7 @@ const Molecule = memo(function Molecule({ position, scale = 1 }) {
   )
 })
 
-// Floating orb - optimized
+// Floating orb
 const GlassOrb = memo(function GlassOrb({ position, scale = 1, color = "#a7f3d0" }) {
   const meshRef = useRef()
 
@@ -238,7 +228,7 @@ const GlassOrb = memo(function GlassOrb({ position, scale = 1, color = "#a7f3d0"
   )
 })
 
-// Particle field - reduced count for performance
+// Particle field
 const ParticleField = memo(function ParticleField() {
   return (
     <Sparkles
@@ -252,31 +242,24 @@ const ParticleField = memo(function ParticleField() {
   )
 })
 
-// Smooth interpolated values for the 3D scene (prevents jitter from rapid scroll events)
-const smoothState = {
-  progress: 0,
-  velocity: 0
-}
-
-// Camera controller that responds to scroll with ultra-smooth interpolation
-// Reads directly from smoothState to always get current values
-function CameraController() {
-  const { camera } = useThree()
+// Simple smooth camera that gently moves on its own
+function SmoothCamera() {
+  const cameraRef = useRef({ x: 0, y: 0 })
   
-  useFrame(() => {
-    // Read directly from global state on each frame
-    const smoothProgress = smoothState.progress
-    const smoothVelocity = smoothState.velocity
+  useFrame(({ camera, clock }) => {
+    const t = clock.elapsedTime
     
-    // Reduced camera movement range for smoother feel
-    const targetZ = 14 - smoothProgress * 3
-    const targetX = Math.sin(smoothProgress * Math.PI * 0.3) * 2 + smoothVelocity * 0.2
-    const targetY = Math.cos(smoothProgress * Math.PI * 0.15) * 1 + smoothVelocity * 0.05
+    // Gentle automatic camera sway - no scroll dependency
+    const targetX = Math.sin(t * 0.1) * 1.5
+    const targetY = Math.cos(t * 0.08) * 0.8
     
-    // Ultra-smooth interpolation
-    camera.position.x += (targetX - camera.position.x) * 0.01
-    camera.position.y += (targetY - camera.position.y) * 0.01
-    camera.position.z += (targetZ - camera.position.z) * 0.01
+    // Smooth interpolation
+    cameraRef.current.x += (targetX - cameraRef.current.x) * 0.02
+    cameraRef.current.y += (targetY - cameraRef.current.y) * 0.02
+    
+    camera.position.x = cameraRef.current.x
+    camera.position.y = cameraRef.current.y
+    camera.position.z = 14
     
     camera.lookAt(0, 0, 0)
   })
@@ -284,27 +267,15 @@ function CameraController() {
   return null
 }
 
-// Main 3D Scene - reads directly from smoothState for always-current values
+// Main 3D Scene - pure time-based animation, no scroll dependency
 function Scene() {
   const groupRef = useRef()
 
   useFrame((state) => {
     if (groupRef.current) {
-      // Read directly from global state on each frame
-      const smoothProgress = smoothState.progress
-      const smoothVelocity = smoothState.velocity
-      
-      // Gentle continuous rotation - reduced scroll influence to prevent spinning
-      const baseRotation = state.clock.elapsedTime * 0.05
-      // Only 15% of a full rotation (about 27 degrees) across the entire page
-      const scrollRotation = smoothProgress * Math.PI * 0.15
-      // Very subtle velocity boost
-      const velocityBoost = smoothVelocity * 0.03
-      
-      groupRef.current.rotation.y = baseRotation + scrollRotation + velocityBoost
-      
-      // Subtle floating motion
-      groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.1 + smoothVelocity * 0.02
+      // Pure time-based rotation - smooth and consistent
+      groupRef.current.rotation.y = state.clock.elapsedTime * 0.05
+      groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.1
     }
   })
 
@@ -318,7 +289,7 @@ function Scene() {
       <directionalLight position={[-10, -10, -5]} intensity={0.5} color="#ffffff" />
       <directionalLight position={[0, 10, 10]} intensity={0.3} color="#ffffff" />
       
-      <CameraController />
+      <SmoothCamera />
       
       <group ref={groupRef}>
         {/* Central DNA - main focus */}
@@ -352,33 +323,8 @@ function Scene() {
   )
 }
 
-// Memoized main component with smooth interpolation at the top level
+// Main component - completely simplified, no scroll logic
 const Scene3D = memo(function Scene3D() {
-  const rafRef = useRef(null)
-  
-  // Smooth interpolation happens outside Canvas - reads directly from global scrollState
-  useEffect(() => {
-    const animate = () => {
-      // Read target values from global scroll state (updated by Lenis in App.jsx)
-      const targetProgress = scrollState.progress
-      const targetVelocity = scrollState.velocity
-      
-      // Very slow interpolation for buttery smooth transitions
-      smoothState.progress += (targetProgress - smoothState.progress) * 0.008
-      smoothState.velocity += (targetVelocity - smoothState.velocity) * 0.02
-      
-      rafRef.current = requestAnimationFrame(animate)
-    }
-    
-    rafRef.current = requestAnimationFrame(animate)
-    
-    return () => {
-      if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current)
-      }
-    }
-  }, []) // Empty deps - runs once, reads from global state
-  
   return (
     <div className="canvas-container interactive">
       <Canvas
@@ -396,18 +342,12 @@ const Scene3D = memo(function Scene3D() {
         }}
         frameloop="always"
       >
-        {/* Adaptive performance */}
         <AdaptiveDpr pixelated />
         <AdaptiveEvents />
-        <SceneWithSmoothState />
+        <Scene />
       </Canvas>
     </div>
   )
 })
-
-// Inner component that renders the scene
-function SceneWithSmoothState() {
-  return <Scene />
-}
 
 export default Scene3D
