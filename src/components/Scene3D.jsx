@@ -4,7 +4,7 @@ import { Float, Sparkles, AdaptiveDpr, AdaptiveEvents } from '@react-three/drei'
 import * as THREE from 'three'
 
 // Pill capsule - optimized geometry
-const SinglePill = memo(function SinglePill({ position, rotation, scale = 1, color = '#00c853', speed = 1 }) {
+const SinglePill = memo(function SinglePill({ position, rotation, scale = 1, color = '#4ade80', speed = 1 }) {
   const groupRef = useRef()
   const time = useRef(Math.random() * 100)
 
@@ -107,11 +107,11 @@ const DNAHelix = memo(function DNAHelix({ position = [0, 0, 0], scale = 1 }) {
         </mesh>
         <mesh position={connector.start.toArray()}>
           <sphereGeometry args={[0.1, 8, 8]} />
-          <meshStandardMaterial color="#5efc82" emissive="#5efc82" emissiveIntensity={0.15} />
+          <meshStandardMaterial color="#86efac" emissive="#86efac" emissiveIntensity={0.1} />
         </mesh>
         <mesh position={connector.end.toArray()}>
           <sphereGeometry args={[0.1, 8, 8]} />
-          <meshStandardMaterial color="#009624" emissive="#009624" emissiveIntensity={0.15} />
+          <meshStandardMaterial color="#22c55e" emissive="#22c55e" emissiveIntensity={0.1} />
         </mesh>
       </group>
     )
@@ -121,11 +121,11 @@ const DNAHelix = memo(function DNAHelix({ position = [0, 0, 0], scale = 1 }) {
     <group ref={groupRef} position={position} scale={scale}>
       <mesh>
         <tubeGeometry args={[curve1, 60, 0.08, 8, false]} />
-        <meshStandardMaterial color="#00c853" emissive="#00c853" emissiveIntensity={0.2} metalness={0.3} roughness={0.4} />
+        <meshStandardMaterial color="#4ade80" emissive="#4ade80" emissiveIntensity={0.12} metalness={0.3} roughness={0.4} />
       </mesh>
       <mesh>
         <tubeGeometry args={[curve2, 60, 0.08, 8, false]} />
-        <meshStandardMaterial color="#10b981" emissive="#10b981" emissiveIntensity={0.2} metalness={0.3} roughness={0.4} />
+        <meshStandardMaterial color="#34d399" emissive="#34d399" emissiveIntensity={0.12} metalness={0.3} roughness={0.4} />
       </mesh>
       {connectorElements}
     </group>
@@ -144,12 +144,12 @@ const Molecule = memo(function Molecule({ position, scale = 1 }) {
   })
 
   const atoms = useMemo(() => [
-    { pos: [0, 0, 0], size: 0.35, color: '#00c853' },
-    { pos: [0.9, 0, 0], size: 0.25, color: '#10b981' },
-    { pos: [-0.7, 0.7, 0], size: 0.25, color: '#5efc82' },
-    { pos: [-0.7, -0.7, 0], size: 0.25, color: '#009624' },
+    { pos: [0, 0, 0], size: 0.35, color: '#4ade80' },
+    { pos: [0.9, 0, 0], size: 0.25, color: '#34d399' },
+    { pos: [-0.7, 0.7, 0], size: 0.25, color: '#86efac' },
+    { pos: [-0.7, -0.7, 0], size: 0.25, color: '#22c55e' },
     { pos: [0, 0, 0.9], size: 0.28, color: '#a7f3d0' },
-    { pos: [0, 0, -0.9], size: 0.28, color: '#00c853' },
+    { pos: [0, 0, -0.9], size: 0.28, color: '#4ade80' },
   ], [])
 
   const bondElements = useMemo(() => {
@@ -228,7 +228,7 @@ const GlassOrb = memo(function GlassOrb({ position, scale = 1, color = "#a7f3d0"
   )
 })
 
-// Particle field
+// Particle field - softer green for better readability
 const ParticleField = memo(function ParticleField() {
   return (
     <Sparkles
@@ -236,8 +236,8 @@ const ParticleField = memo(function ParticleField() {
       scale={30}
       size={1.0}
       speed={0.1}
-      opacity={0.25}
-      color="#00c853"
+      opacity={0.2}
+      color="#4ade80"
     />
   )
 })
@@ -281,8 +281,8 @@ function Scene() {
 
   return (
     <>
-      <color attach="background" args={['#000000']} />
-      <fog attach="fog" args={['#000000', 15, 50]} />
+      <color attach="background" args={['#0a0a0a']} />
+      <fog attach="fog" args={['#0a0a0a', 15, 50]} />
       
       <ambientLight intensity={1.2} />
       <directionalLight position={[10, 10, 5]} intensity={1} color="#ffffff" />
@@ -295,26 +295,26 @@ function Scene() {
         {/* Central DNA - main focus */}
         <DNAHelix position={[0, 0, 0]} scale={1} />
         
-        {/* Floating pills - distributed around */}
-        <SinglePill position={[-5, 2, -2]} rotation={[0.5, 0.3, 0.8]} scale={1.3} color="#00c853" speed={0.6} />
-        <SinglePill position={[5, -1, -3]} rotation={[0.2, 0.8, 0.3]} scale={1} color="#10b981" speed={0.8} />
-        <SinglePill position={[-4, -3, 1]} rotation={[0.8, 0.2, 0.5]} scale={0.9} color="#5efc82" speed={0.7} />
-        <SinglePill position={[4, 3, -1]} rotation={[0.3, 0.5, 0.2]} scale={1.1} color="#00c853" speed={0.5} />
-        <SinglePill position={[6, 0, 2]} rotation={[0.1, 0.9, 0.4]} scale={0.85} color="#009624" speed={0.9} />
-        <SinglePill position={[-6, 1, -1]} rotation={[0.6, 0.4, 0.1]} scale={1.2} color="#10b981" speed={0.65} />
+        {/* Floating pills - softer greens for better readability */}
+        <SinglePill position={[-5, 2, -2]} rotation={[0.5, 0.3, 0.8]} scale={1.3} color="#4ade80" speed={0.6} />
+        <SinglePill position={[5, -1, -3]} rotation={[0.2, 0.8, 0.3]} scale={1} color="#34d399" speed={0.8} />
+        <SinglePill position={[-4, -3, 1]} rotation={[0.8, 0.2, 0.5]} scale={0.9} color="#86efac" speed={0.7} />
+        <SinglePill position={[4, 3, -1]} rotation={[0.3, 0.5, 0.2]} scale={1.1} color="#4ade80" speed={0.5} />
+        <SinglePill position={[6, 0, 2]} rotation={[0.1, 0.9, 0.4]} scale={0.85} color="#22c55e" speed={0.9} />
+        <SinglePill position={[-6, 1, -1]} rotation={[0.6, 0.4, 0.1]} scale={1.2} color="#34d399" speed={0.65} />
         <SinglePill position={[0, 5, -4]} rotation={[1, 0.2, 0.3]} scale={0.95} color="#a7f3d0" speed={0.75} />
-        <SinglePill position={[0, -5, 3]} rotation={[0.4, 0.7, 0.9]} scale={1.05} color="#00c853" speed={0.55} />
+        <SinglePill position={[0, -5, 3]} rotation={[0.4, 0.7, 0.9]} scale={1.05} color="#4ade80" speed={0.55} />
         
         {/* Molecules */}
         <Molecule position={[7, -4, -6]} scale={1} />
         <Molecule position={[-7, 4, -5]} scale={0.8} />
         <Molecule position={[3, -6, 4]} scale={0.7} />
         
-        {/* Orbs */}
+        {/* Orbs - softer colors */}
         <GlassOrb position={[-3, 5, -3]} scale={1.8} color="#a7f3d0" />
-        <GlassOrb position={[3, -5, -2]} scale={1.5} color="#5efc82" />
-        <GlassOrb position={[0, 0, -8]} scale={2.5} color="#00c853" />
-        <GlassOrb position={[-8, 0, 0]} scale={1.3} color="#10b981" />
+        <GlassOrb position={[3, -5, -2]} scale={1.5} color="#86efac" />
+        <GlassOrb position={[0, 0, -8]} scale={2.5} color="#4ade80" />
+        <GlassOrb position={[-8, 0, 0]} scale={1.3} color="#34d399" />
         <GlassOrb position={[8, 2, -4]} scale={1.6} color="#a7f3d0" />
       </group>
       
@@ -338,7 +338,7 @@ const Scene3D = memo(function Scene3D() {
           depth: true,
         }}
         onCreated={({ gl }) => {
-          gl.setClearColor('#000000')
+          gl.setClearColor('#0a0a0a')
         }}
         frameloop="always"
       >

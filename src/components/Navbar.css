@@ -11,9 +11,9 @@
 }
 
 .navbar.scrolled {
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(10, 10, 10, 0.95);
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(0, 200, 83, 0.15);
+  border-bottom: 1px solid rgba(74, 222, 128, 0.1);
   padding: 15px 40px;
 }
 
@@ -47,6 +47,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  filter: drop-shadow(0 0 15px rgba(34, 255, 122, 0.5));
 }
 
 .nav-links {
@@ -67,7 +68,8 @@
   font-family: var(--font-mono);
   font-size: 10px;
   color: var(--accent-green);
-  opacity: 0.6;
+  opacity: 0.8;
+  text-shadow: 0 0 12px rgba(34, 255, 122, 0.6);
 }
 
 .link-text {
@@ -113,7 +115,7 @@
   letter-spacing: 0.1em;
   padding: 8px 14px;
   background: transparent;
-  border: 1px solid rgba(0, 200, 83, 0.5);
+  border: 1px solid rgba(74, 222, 128, 0.35);
   color: var(--accent-green);
   cursor: pointer;
   transition: all 0.3s ease;
@@ -121,7 +123,7 @@
 }
 
 .btn-lang:hover {
-  background: rgba(0, 200, 83, 0.1);
+  background: rgba(74, 222, 128, 0.08);
   border-color: var(--accent-green);
 }
 
@@ -212,11 +214,11 @@
   bottom: 0;
   width: 100%;
   max-width: 400px;
-  background: rgba(0, 0, 0, 0.95);
+  background: rgba(10, 10, 10, 0.98);
   backdrop-filter: blur(20px);
   z-index: 99;
   padding: 120px 40px 40px;
-  border-left: 1px solid rgba(0, 200, 83, 0.15);
+  border-left: 1px solid rgba(74, 222, 128, 0.1);
 }
 
 .mobile-menu-content {
@@ -231,13 +233,14 @@
   gap: 15px;
   text-decoration: none;
   padding: 15px 0;
-  border-bottom: 1px solid rgba(0, 200, 83, 0.15);
+  border-bottom: 1px solid rgba(74, 222, 128, 0.1);
 }
 
 .mobile-link-number {
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--accent-green);
+  text-shadow: 0 0 15px rgba(34, 255, 122, 0.6);
 }
 
 .mobile-link-text {

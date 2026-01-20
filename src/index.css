@@ -2,25 +2,28 @@
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
 
 :root {
-  /* Dark theme with vibrant green accents */
-  --bg-primary: #050505;
-  --bg-secondary: #0a0a0a;
-  --bg-tertiary: #0f0f0f;
-  --bg-card: rgba(15, 15, 15, 0.8);
+  /* Dark theme with refined green accents for better readability */
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #111111;
+  --bg-tertiary: #161616;
+  --bg-card: rgba(18, 18, 18, 0.85);
   
-  --accent-green: #00ff6a;
-  --accent-green-dark: #00cc55;
-  --accent-green-light: #5efc82;
-  --accent-emerald: #00d9a0;
-  --accent-mint: #a7f3d0;
+  /* Vibrant green for text - stands out from softer 3D background */
+  --accent-green: #22ff7a;
+  --accent-green-dark: #00e065;
+  --accent-green-light: #7dffb0;
+  --accent-emerald: #00f5a0;
+  --accent-mint: #b8ffd9;
   
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
-  --text-muted: #666666;
+  /* Improved text contrast */
+  --text-primary: #f5f5f5;
+  --text-secondary: #b0b0b0;
+  --text-muted: #777777;
   
+  /* Vibrant gradients for text */
   --gradient-primary: linear-gradient(135deg, var(--accent-green), var(--accent-emerald));
   --gradient-secondary: linear-gradient(135deg, var(--accent-emerald), var(--accent-green-dark));
-  --gradient-glow: radial-gradient(circle, rgba(0, 255, 106, 0.15) 0%, transparent 70%);
+  --gradient-glow: radial-gradient(circle, rgba(34, 255, 122, 0.1) 0%, transparent 70%);
   
   --font-display: 'Syne', sans-serif;
   --font-mono: 'Space Mono', monospace;
@@ -153,6 +156,7 @@ h1, h2, h3, h4, h5, h6 {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(34, 255, 122, 0.4));
 }
 
 .gradient-text-secondary {
@@ -160,15 +164,16 @@ h1, h2, h3, h4, h5, h6 {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  filter: drop-shadow(0 0 15px rgba(0, 245, 160, 0.35));
 }
 
-/* Glowing effects */
+/* Subtle glowing effects - toned down for better readability */
 .glow {
-  filter: drop-shadow(0 0 20px var(--accent-green)) drop-shadow(0 0 40px rgba(0, 255, 106, 0.4));
+  filter: drop-shadow(0 0 10px rgba(74, 222, 128, 0.3));
 }
 
 .glow-green {
-  filter: drop-shadow(0 0 20px var(--accent-emerald)) drop-shadow(0 0 40px rgba(0, 217, 160, 0.4));
+  filter: drop-shadow(0 0 10px rgba(52, 211, 153, 0.3));
 }
 
 /* Button styles - GPU accelerated transitions */
@@ -200,7 +205,7 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-primary:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(0, 255, 106, 0.3);
+  box-shadow: 0 15px 30px rgba(74, 222, 128, 0.2);
 }
 
 .btn-secondary {
@@ -213,10 +218,10 @@ h1, h2, h3, h4, h5, h6 {
 .btn-secondary:hover {
   background: var(--accent-green);
   color: var(--bg-primary);
-  box-shadow: 0 0 30px rgba(0, 255, 106, 0.3);
+  box-shadow: 0 0 20px rgba(74, 222, 128, 0.15);
 }
 
-/* Grid pattern overlay - optimized */
+/* Grid pattern overlay - subtle for minimal distraction */
 .grid-overlay {
   position: fixed;
   top: 0;
@@ -224,8 +229,8 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
   height: 100%;
   background-image: 
-    linear-gradient(rgba(0, 255, 106, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 255, 106, 0.02) 1px, transparent 1px);
+    linear-gradient(rgba(74, 222, 128, 0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74, 222, 128, 0.015) 1px, transparent 1px);
   background-size: 100px 100px;
   pointer-events: none;
   z-index: 2;

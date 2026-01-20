@@ -24,6 +24,7 @@
   color: var(--accent-green);
   margin-bottom: 20px;
   position: relative;
+  text-shadow: 0 0 20px rgba(34, 255, 122, 0.5);
 }
 
 .section-label::before,
@@ -58,9 +59,9 @@
 }
 
 .feature-card {
-  background: rgba(10, 10, 10, 0.8);
+  background: rgba(18, 18, 18, 0.85);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 200, 83, 0.15);
+  border: 1px solid rgba(74, 222, 128, 0.1);
   padding: 50px;
   position: relative;
   overflow: hidden;
@@ -92,8 +93,8 @@
 }
 
 .feature-card:hover {
-  background: rgba(15, 15, 15, 0.95);
-  border-color: rgba(0, 200, 83, 0.3);
+  background: rgba(24, 24, 24, 0.95);
+  border-color: rgba(74, 222, 128, 0.2);
   transform: translateY(-10px);
 }
 
@@ -101,7 +102,7 @@
 .feature-card.feature-pink:hover,
 .feature-card.feature-purple:hover,
 .feature-card.feature-cyan:hover {
-  box-shadow: 0 30px 60px rgba(0, 200, 83, 0.15);
+  box-shadow: 0 20px 40px rgba(74, 222, 128, 0.08);
 }
 
 .feature-card.feature-pink::before,

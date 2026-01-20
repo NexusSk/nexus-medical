@@ -22,8 +22,8 @@
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background: rgba(0, 200, 83, 0.1);
-  border: 1px solid rgba(0, 200, 83, 0.3);
+  background: rgba(34, 255, 122, 0.06);
+  border: 1px solid rgba(34, 255, 122, 0.25);
   padding: 10px 20px;
   border-radius: 50px;
   font-family: var(--font-mono);
@@ -32,6 +32,7 @@
   letter-spacing: 0.15em;
   color: var(--accent-green);
   margin-bottom: 40px;
+  text-shadow: 0 0 20px rgba(34, 255, 122, 0.5);
 }
 
 .badge-dot {
@@ -40,6 +41,7 @@
   background: var(--accent-green);
   border-radius: 50%;
   animation: pulse 2s ease-in-out infinite;
+  box-shadow: 0 0 10px var(--accent-green), 0 0 20px rgba(34, 255, 122, 0.5);
 }
 
 @keyframes pulse {
@@ -59,10 +61,13 @@
   line-height: 0.95;
   margin-bottom: 40px;
   text-transform: uppercase;
+  text-align: center;
+  width: 100%;
 }
 
 .title-line {
   display: block;
+  text-align: center;
 }
 
 .title-line:first-child {
@@ -76,6 +81,7 @@
 .title-line.gradient-text {
   font-size: 1.2em;
   letter-spacing: -0.04em;
+  text-align: center;
 }
 
 .hero-description {
@@ -113,6 +119,7 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
+  filter: drop-shadow(0 0 15px rgba(34, 255, 122, 0.4));
 }
 
 .stat-label {
