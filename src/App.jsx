@@ -10,11 +10,14 @@ import Modal, { DemoContent, ContactFormContent, SuccessContent, StoryContent } 
 import { useLanguage } from './context/LanguageContext'
 import './App.css'
 
+// Global scroll state that Scene3D can read without React re-renders
+export const scrollState = {
+  progress: 0,
+  velocity: 0
+}
+
 function App() {
-  const [scrollProgress, setScrollProgress] = useState(0)
-  const [scrollVelocity, setScrollVelocity] = useState(0)
   const lenisRef = useRef(null)
-  const velocityRef = useRef(0)
   
   // Modal states
   const [demoModalOpen, setDemoModalOpen] = useState(false)
@@ -41,14 +44,12 @@ function App() {
       touchMultiplier: 1.5,
       lerp: 0.075, // Very smooth lerp factor
       infinite: false,
-      autoRaf: false, // We'll handle RAF ourselves
     })
 
-    // Track velocity for 3D objects
+    // Track velocity for 3D objects - using global state to avoid React re-renders
     lenisRef.current.on('scroll', ({ velocity, progress }) => {
-      velocityRef.current = velocity
-      setScrollVelocity(velocity)
-      setScrollProgress(progress)
+      scrollState.progress = progress
+      scrollState.velocity = velocity
     })
 
     function raf(time) {
@@ -79,7 +80,7 @@ function App() {
   return (
     <>
       {/* 3D Background Scene */}
-      <Scene3D scrollProgress={scrollProgress} scrollVelocity={scrollVelocity} />
+      <Scene3D />
 
       {/* Background Elements */}
       <div className="grid-overlay"></div>

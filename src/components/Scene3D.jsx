@@ -2,6 +2,7 @@ import { useRef, useMemo, memo, useEffect } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
 import { Float, Sparkles, AdaptiveDpr, AdaptiveEvents } from '@react-three/drei'
 import * as THREE from 'three'
+import { scrollState } from '../App'
 
 // Pill capsule - optimized geometry (reduced segments)
 const SinglePill = memo(function SinglePill({ position, rotation, scale = 1, color = '#00c853', speed = 1 }) {
@@ -251,19 +252,10 @@ const ParticleField = memo(function ParticleField() {
   )
 })
 
-// Global refs to persist smooth values across re-renders (prevents 360 spin on language change)
-// Reset on page load to ensure consistent state
+// Smooth interpolated values for the 3D scene (prevents jitter from rapid scroll events)
 const smoothState = {
   progress: 0,
   velocity: 0
-}
-
-// Reset smooth state on page load
-if (typeof window !== 'undefined') {
-  window.addEventListener('load', () => {
-    smoothState.progress = 0
-    smoothState.velocity = 0
-  }, { once: true })
 }
 
 // Camera controller that responds to scroll with ultra-smooth interpolation
@@ -361,25 +353,19 @@ function Scene() {
 }
 
 // Memoized main component with smooth interpolation at the top level
-const Scene3D = memo(function Scene3D({ scrollProgress = 0, scrollVelocity = 0 }) {
-  const smoothProgressRef = useRef(smoothState.progress)
-  const smoothVelocityRef = useRef(smoothState.velocity)
+const Scene3D = memo(function Scene3D() {
   const rafRef = useRef(null)
   
-  // Smooth interpolation happens outside Canvas to persist across re-renders
+  // Smooth interpolation happens outside Canvas - reads directly from global scrollState
   useEffect(() => {
-    // Sync refs with global state on mount
-    smoothProgressRef.current = smoothState.progress
-    smoothVelocityRef.current = smoothState.velocity
-    
     const animate = () => {
-      // Very slow interpolation for buttery smooth transitions
-      smoothProgressRef.current += (scrollProgress - smoothProgressRef.current) * 0.008
-      smoothVelocityRef.current += (scrollVelocity - smoothVelocityRef.current) * 0.02
+      // Read target values from global scroll state (updated by Lenis in App.jsx)
+      const targetProgress = scrollState.progress
+      const targetVelocity = scrollState.velocity
       
-      // Store in global state to persist across remounts
-      smoothState.progress = smoothProgressRef.current
-      smoothState.velocity = smoothVelocityRef.current
+      // Very slow interpolation for buttery smooth transitions
+      smoothState.progress += (targetProgress - smoothState.progress) * 0.008
+      smoothState.velocity += (targetVelocity - smoothState.velocity) * 0.02
       
       rafRef.current = requestAnimationFrame(animate)
     }
@@ -391,7 +377,7 @@ const Scene3D = memo(function Scene3D({ scrollProgress = 0, scrollVelocity = 0 }
         cancelAnimationFrame(rafRef.current)
       }
     }
-  }, [scrollProgress, scrollVelocity])
+  }, []) // Empty deps - runs once, reads from global state
   
   return (
     <div className="canvas-container interactive">
