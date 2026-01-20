@@ -2,7 +2,8 @@
 <html lang="sk">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/nexus-medical/vite.svg" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <link rel="apple-touch-icon" href="./favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="description" content="NexusMed - Priekopníci budúcnosti medicíny prostredníctvom pokročilej biotechnológie a objavovania liekov pomocou AI." />
     <meta name="theme-color" content="#000000" />
@@ -21,11 +22,17 @@
     
     <!-- Prevent FOUC -->
     <style>
-      html { background: #000; }
+      html { background: #000; scroll-behavior: auto; }
       body { opacity: 0; transition: opacity 0.3s ease; }
       body.loaded { opacity: 1; }
     </style>
-    <script type="module" crossorigin src="/nexus-medical/assets/index-B3300VPj.js"></script>
+    <script>
+      // Prevent browser scroll restoration for consistent 3D background state
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+    </script>
+    <script type="module" crossorigin src="/nexus-medical/assets/index-BDCIWRXQ.js"></script>
     <link rel="stylesheet" crossorigin href="/nexus-medical/assets/index-Cdk7fQdY.css">
   </head>
   <body>
