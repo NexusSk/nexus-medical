@@ -254,7 +254,8 @@ const ParticleField = memo(function ParticleField() {
 // Global refs to persist smooth values across re-renders (prevents 360 spin on language change)
 const smoothState = {
   progress: 0,
-  velocity: 0
+  velocity: 0,
+  initialized: false
 }
 
 // Camera controller that responds to scroll with ultra-smooth interpolation
@@ -359,6 +360,15 @@ const Scene3D = memo(function Scene3D({ scrollProgress = 0, scrollVelocity = 0 }
   
   // Smooth interpolation happens outside Canvas to persist across re-renders
   useEffect(() => {
+    // Reset state on initial mount for consistent behavior across deployments
+    if (!smoothState.initialized) {
+      smoothState.progress = 0
+      smoothState.velocity = 0
+      smoothProgressRef.current = 0
+      smoothVelocityRef.current = 0
+      smoothState.initialized = true
+    }
+    
     const animate = () => {
       // Very slow interpolation for buttery smooth transitions
       smoothProgressRef.current += (scrollProgress - smoothProgressRef.current) * 0.008

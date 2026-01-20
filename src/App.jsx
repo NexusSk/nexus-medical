@@ -27,6 +27,9 @@ function App() {
   const { t } = useLanguage()
 
   useEffect(() => {
+    // Reset scroll position on page load to ensure consistent 3D state
+    window.scrollTo(0, 0)
+    
     // Initialize Lenis smooth scrolling with ultra-smooth configuration
     lenisRef.current = new Lenis({
       duration: 1.8, // Longer duration for smoother feel
@@ -38,6 +41,7 @@ function App() {
       touchMultiplier: 1.5,
       lerp: 0.075, // Very smooth lerp factor
       infinite: false,
+      autoRaf: false, // We'll handle RAF ourselves
     })
 
     // Track velocity for 3D objects
