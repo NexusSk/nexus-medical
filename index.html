@@ -1,20 +1,42 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="sk">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/nexus-medical/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="MedX - Pioneering the future of medicine through advanced biotechnology and AI-driven drug discovery." />
-    <meta name="theme-color" content="#ffffff" />
-    <title>MedX | The Future of Medicine</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="NexusMed - Priekopníci budúcnosti medicíny prostredníctvom pokročilej biotechnológie a objavovania liekov pomocou AI." />
+    <meta name="theme-color" content="#000000" />
+    <meta name="color-scheme" content="dark" />
+    <title>NexusMed | Budúcnosť medicíny</title>
     
-    <!-- Preload critical fonts -->
+    <!-- DNS prefetch and preconnect for faster resource loading -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <script type="module" crossorigin src="/nexus-medical/assets/index-3Vl_4naR.js"></script>
-    <link rel="stylesheet" crossorigin href="/nexus-medical/assets/index-DuEzQkb8.css">
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com">
+    
+    <!-- Preload critical fonts with display swap -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap"></noscript>
+    
+    <!-- Prevent FOUC -->
+    <style>
+      html { background: #000; }
+      body { opacity: 0; transition: opacity 0.3s ease; }
+      body.loaded { opacity: 1; }
+    </style>
+    <script type="module" crossorigin src="/nexus-medical/assets/index-BpRrQGN_.js"></script>
+    <link rel="stylesheet" crossorigin href="/nexus-medical/assets/index-Cdk7fQdY.css">
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"></div>
+    <script>
+      // Mark body as loaded after initial render
+      window.addEventListener('DOMContentLoaded', () => {
+        requestAnimationFrame(() => {
+          document.body.classList.add('loaded');
+        });
+      });
+    </script>
   </body>
 </html>
