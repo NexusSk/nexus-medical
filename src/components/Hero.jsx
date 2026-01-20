@@ -1,11 +1,22 @@
 import { motion } from 'framer-motion'
+import { useLanguage } from '../context/LanguageContext'
 import './Hero.css'
 
-export default function Hero({ onWatchDemo }) {
+export default function Hero({ onWatchDemo, lenisRef }) {
+  const { t } = useLanguage()
+  
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId)
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
+      // Use Lenis for smooth scrolling if available
+      if (lenisRef?.current) {
+        lenisRef.current.scrollTo(element, { 
+          duration: 2.5,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+        })
+      } else {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
     }
   }
 
@@ -19,7 +30,7 @@ export default function Hero({ onWatchDemo }) {
           transition={{ duration: 0.8, delay: 0.2 }}
         >
           <span className="badge-dot"></span>
-          <span>Revolutionizing Healthcare</span>
+          <span>{t('heroBadge')}</span>
         </motion.div>
 
         <motion.h1
@@ -28,9 +39,9 @@ export default function Hero({ onWatchDemo }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1, delay: 0.4 }}
         >
-          <span className="title-line">The Future of</span>
-          <span className="title-line gradient-text">Medicine</span>
-          <span className="title-line">Starts Here</span>
+          <span className="title-line">{t('heroTitleLine1')}</span>
+          <span className="title-line gradient-text">{t('heroTitleLine2')}</span>
+          <span className="title-line">{t('heroTitleLine3')}</span>
         </motion.h1>
 
         <motion.p
@@ -39,8 +50,7 @@ export default function Hero({ onWatchDemo }) {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.7 }}
         >
-          Pioneering breakthrough treatments through advanced biotechnology
-          and AI-driven drug discovery. Where science meets innovation.
+          {t('heroDescription')}
         </motion.p>
 
         <motion.div
@@ -53,13 +63,13 @@ export default function Hero({ onWatchDemo }) {
             className="btn btn-primary"
             onClick={() => scrollToSection('features')}
           >
-            Discover More
+            {t('heroDiscoverMore')}
           </button>
           <button 
             className="btn btn-secondary"
             onClick={onWatchDemo}
           >
-            Watch Demo
+            {t('heroWatchDemo')}
           </button>
         </motion.div>
 
@@ -71,32 +81,21 @@ export default function Hero({ onWatchDemo }) {
         >
           <div className="stat">
             <span className="stat-number">50+</span>
-            <span className="stat-label">Clinical Trials</span>
+            <span className="stat-label">{t('heroClinicalTrials')}</span>
           </div>
           <div className="stat-divider"></div>
           <div className="stat">
             <span className="stat-number">12M</span>
-            <span className="stat-label">Patients Reached</span>
+            <span className="stat-label">{t('heroPatientsReached')}</span>
           </div>
           <div className="stat-divider"></div>
           <div className="stat">
             <span className="stat-number">98%</span>
-            <span className="stat-label">Success Rate</span>
+            <span className="stat-label">{t('heroSuccessRate')}</span>
           </div>
         </motion.div>
       </div>
 
-      <motion.div
-        className="scroll-indicator"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 1, delay: 1.5 }}
-        onClick={() => scrollToSection('features')}
-        style={{ cursor: 'pointer' }}
-      >
-        <div className="scroll-line"></div>
-        <span>Scroll to explore</span>
-      </motion.div>
     </section>
   )
 }

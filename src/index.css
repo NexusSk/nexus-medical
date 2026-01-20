@@ -1,24 +1,26 @@
+/* Optimized font loading with display swap for faster rendering */
 @import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
 
 :root {
-  /* Clean white and green medical theme */
-  --bg-primary: #ffffff;
-  --bg-secondary: #f8fdfb;
-  --bg-tertiary: #f0f9f4;
+  /* Dark theme with vibrant green accents */
+  --bg-primary: #050505;
+  --bg-secondary: #0a0a0a;
+  --bg-tertiary: #0f0f0f;
+  --bg-card: rgba(15, 15, 15, 0.8);
   
-  --accent-green: #00c853;
-  --accent-green-dark: #009624;
+  --accent-green: #00ff6a;
+  --accent-green-dark: #00cc55;
   --accent-green-light: #5efc82;
-  --accent-emerald: #10b981;
+  --accent-emerald: #00d9a0;
   --accent-mint: #a7f3d0;
   
-  --text-primary: #1a1a2e;
-  --text-secondary: #4a5568;
-  --text-muted: #718096;
+  --text-primary: #ffffff;
+  --text-secondary: #a0a0a0;
+  --text-muted: #666666;
   
   --gradient-primary: linear-gradient(135deg, var(--accent-green), var(--accent-emerald));
   --gradient-secondary: linear-gradient(135deg, var(--accent-emerald), var(--accent-green-dark));
-  --gradient-glow: radial-gradient(circle, rgba(0, 200, 83, 0.1) 0%, transparent 70%);
+  --gradient-glow: radial-gradient(circle, rgba(0, 255, 106, 0.15) 0%, transparent 70%);
   
   --font-display: 'Syne', sans-serif;
   --font-mono: 'Space Mono', monospace;
@@ -30,8 +32,22 @@
   box-sizing: border-box;
 }
 
+/* Performance: Enable hardware acceleration globally */
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* Optimize font rendering */
+body, html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
 html {
   scroll-behavior: smooth;
+  scroll-snap-type: none;
 }
 
 body {
@@ -66,12 +82,12 @@ html.lenis, html.lenis body {
 /* Selection styling */
 ::selection {
   background: var(--accent-green);
-  color: white;
+  color: var(--bg-primary);
 }
 
 /* Scrollbar styling */
 ::-webkit-scrollbar {
-  width: 8px;
+  width: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -80,14 +96,14 @@ html.lenis, html.lenis body {
 
 ::-webkit-scrollbar-thumb {
   background: var(--accent-green);
-  border-radius: 4px;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-green-dark);
+  background: var(--accent-green-light);
 }
 
-/* Canvas container */
+/* Canvas container - GPU accelerated */
 .canvas-container {
   position: fixed;
   top: 0;
@@ -96,6 +112,9 @@ html.lenis, html.lenis body {
   height: 100vh;
   z-index: 0;
   pointer-events: none;
+  will-change: transform;
+  contain: strict;
+  transform: translateZ(0);
 }
 
 .canvas-container.interactive {
@@ -106,6 +125,9 @@ html.lenis, html.lenis body {
 .content-wrapper {
   position: relative;
   z-index: 1;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Section base styles */
@@ -142,14 +164,14 @@ h1, h2, h3, h4, h5, h6 {
 
 /* Glowing effects */
 .glow {
-  filter: drop-shadow(0 0 20px var(--accent-green)) drop-shadow(0 0 40px rgba(0, 200, 83, 0.4));
+  filter: drop-shadow(0 0 20px var(--accent-green)) drop-shadow(0 0 40px rgba(0, 255, 106, 0.4));
 }
 
 .glow-green {
-  filter: drop-shadow(0 0 20px var(--accent-emerald)) drop-shadow(0 0 40px rgba(16, 185, 129, 0.4));
+  filter: drop-shadow(0 0 20px var(--accent-emerald)) drop-shadow(0 0 40px rgba(0, 217, 160, 0.4));
 }
 
-/* Button styles */
+/* Button styles - GPU accelerated transitions */
 .btn {
   font-family: var(--font-mono);
   font-size: 14px;
@@ -161,18 +183,24 @@ h1, h2, h3, h4, h5, h6 {
   cursor: pointer;
   position: relative;
   overflow: hidden;
-  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), 
+              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              background-color 0.3s ease,
+              color 0.3s ease;
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 .btn-primary {
   background: var(--gradient-primary);
-  color: white;
+  color: var(--bg-primary);
   clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
 }
 
 .btn-primary:hover {
   transform: translateY(-4px);
-  box-shadow: 0 20px 40px rgba(0, 200, 83, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 255, 106, 0.3);
 }
 
 .btn-secondary {
@@ -184,10 +212,11 @@ h1, h2, h3, h4, h5, h6 {
 
 .btn-secondary:hover {
   background: var(--accent-green);
-  color: white;
+  color: var(--bg-primary);
+  box-shadow: 0 0 30px rgba(0, 255, 106, 0.3);
 }
 
-/* Grid pattern overlay */
+/* Grid pattern overlay - optimized */
 .grid-overlay {
   position: fixed;
   top: 0;
@@ -195,11 +224,13 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
   height: 100%;
   background-image: 
-    linear-gradient(rgba(0, 200, 83, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0, 200, 83, 0.04) 1px, transparent 1px);
-  background-size: 80px 80px;
+    linear-gradient(rgba(0, 255, 106, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 106, 0.02) 1px, transparent 1px);
+  background-size: 100px 100px;
   pointer-events: none;
   z-index: 2;
+  contain: strict;
+  transform: translateZ(0);
 }
 
 /* Noise texture */
@@ -209,7 +240,7 @@ h1, h2, h3, h4, h5, h6 {
   left: 0;
   width: 100%;
   height: 100%;
-  opacity: 0.015;
+  opacity: 0.02;
   pointer-events: none;
   z-index: 3;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");

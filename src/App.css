@@ -1,16 +1,20 @@
 /* App-specific styles */
 
-/* Custom Cursor */
+/* Custom Cursor - GPU accelerated */
 .custom-cursor {
   position: fixed;
+  top: 0;
+  left: 0;
   width: 40px;
   height: 40px;
   border: 1px solid var(--accent-green);
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: width 0.3s ease, height 0.3s ease, border-color 0.3s ease;
+  will-change: transform, width, height;
+  backface-visibility: hidden;
+  transition: width 0.2s ease, height 0.2s ease, border-color 0.2s ease;
+  contain: layout style;
 }
 
 .custom-cursor.hover {
@@ -21,26 +25,29 @@
 
 .custom-cursor-dot {
   position: fixed;
+  top: 0;
+  left: 0;
   width: 6px;
   height: 6px;
   background: var(--accent-green);
   border-radius: 50%;
   pointer-events: none;
   z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: transform 0.2s ease, background 0.3s ease;
+  will-change: transform;
+  backface-visibility: hidden;
+  transition: background 0.2s ease;
+  contain: layout style;
 }
 
 .custom-cursor-dot.hover {
   background: var(--accent-green-dark);
-  transform: translate(-50%, -50%) scale(1.5);
 }
 
-/* Hide custom cursor on mobile */
-@media (max-width: 1024px) {
+/* Hide custom cursor on mobile and touch devices */
+@media (max-width: 1024px), (hover: none) {
   .custom-cursor,
   .custom-cursor-dot {
-    display: none;
+    display: none !important;
   }
 }
 
@@ -51,7 +58,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--bg-primary);
+  background: #000000;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -76,7 +83,7 @@
 .loading-bar {
   width: 200px;
   height: 2px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(0, 200, 83, 0.1);
   border-radius: 2px;
   overflow: hidden;
 }
@@ -102,16 +109,17 @@
   }
 }
 
-/* Smooth reveal animations */
+/* Smooth reveal animations - GPU accelerated */
 .reveal {
   opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.8s ease, transform 0.8s ease;
+  transform: translate3d(0, 30px, 0);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  will-change: opacity, transform;
 }
 
 .reveal.active {
   opacity: 1;
-  transform: translateY(0);
+  transform: translate3d(0, 0, 0);
 }
 
 /* Parallax container */
@@ -144,7 +152,7 @@ section:last-child::after {
 /* Text selection color throughout app */
 ::selection {
   background: var(--accent-green);
-  color: white;
+  color: #000000;
 }
 
 /* Focus states for accessibility */
@@ -163,11 +171,35 @@ button:focus-visible {
 .content-wrapper {
   position: relative;
   z-index: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content-wrapper > section:last-of-type {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Performance optimization */
 .canvas-container canvas {
-  will-change: transform;
+  will-change: contents;
+  contain: strict;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  
+  .custom-cursor,
+  .custom-cursor-dot {
+    display: none !important;
+  }
 }
 
 /* Feature Modal Content */

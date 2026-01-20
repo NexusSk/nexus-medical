@@ -1,43 +1,9 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
+import { useLanguage } from '../context/LanguageContext'
 import './Features.css'
 
-const features = [
-  {
-    number: '01',
-    title: 'AI-Driven Discovery',
-    description: 'Leveraging machine learning algorithms to identify promising drug candidates 10x faster than traditional methods.',
-    icon: '◈',
-    color: 'teal',
-    details: 'Our AI platform analyzes millions of molecular structures to find the most promising drug candidates.'
-  },
-  {
-    number: '02',
-    title: 'Precision Medicine',
-    description: 'Tailoring treatments to individual genetic profiles for maximum efficacy and minimal side effects.',
-    icon: '⬡',
-    color: 'pink',
-    details: 'We use genetic profiling to create personalized treatment plans for each patient.'
-  },
-  {
-    number: '03',
-    title: 'Nano Delivery',
-    description: 'Revolutionary nanoparticle delivery systems that target specific cells with unprecedented accuracy.',
-    icon: '◇',
-    color: 'purple',
-    details: 'Our nanoparticles can deliver drugs directly to diseased cells while sparing healthy tissue.'
-  },
-  {
-    number: '04',
-    title: 'Gene Therapy',
-    description: 'Cutting-edge CRISPR technology to correct genetic mutations at their source.',
-    icon: '⬢',
-    color: 'cyan',
-    details: 'We are pioneering gene editing treatments for previously untreatable genetic disorders.'
-  }
-]
-
-function FeatureCard({ feature, index, onLearnMore }) {
+function FeatureCard({ feature, index, onLearnMore, learnMoreText }) {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
 
@@ -60,7 +26,7 @@ function FeatureCard({ feature, index, onLearnMore }) {
         onClick={() => onLearnMore(feature)}
         style={{ cursor: 'pointer' }}
       >
-        <span>Learn more</span>
+        <span>{learnMoreText}</span>
         <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
           <path d="M4 10H16M16 10L10 4M16 10L10 16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
@@ -72,6 +38,42 @@ function FeatureCard({ feature, index, onLearnMore }) {
 export default function Features({ onLearnMore }) {
   const titleRef = useRef(null)
   const isInView = useInView(titleRef, { once: true, margin: '-100px' })
+  const { t } = useLanguage()
+
+  const features = [
+    {
+      number: '01',
+      title: t('feature1Title'),
+      description: t('feature1Desc'),
+      icon: '◈',
+      color: 'teal',
+      details: t('feature1Details')
+    },
+    {
+      number: '02',
+      title: t('feature2Title'),
+      description: t('feature2Desc'),
+      icon: '⬡',
+      color: 'pink',
+      details: t('feature2Details')
+    },
+    {
+      number: '03',
+      title: t('feature3Title'),
+      description: t('feature3Desc'),
+      icon: '◇',
+      color: 'purple',
+      details: t('feature3Details')
+    },
+    {
+      number: '04',
+      title: t('feature4Title'),
+      description: t('feature4Desc'),
+      icon: '⬢',
+      color: 'cyan',
+      details: t('feature4Details')
+    }
+  ]
 
   return (
     <section className="features" id="features">
@@ -83,13 +85,13 @@ export default function Features({ onLearnMore }) {
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 40 }}
           transition={{ duration: 0.8 }}
         >
-          <span className="section-label">Our Technology</span>
+          <span className="section-label">{t('featuresSectionLabel')}</span>
           <h2 className="features-title">
-            <span>Breakthrough</span>
-            <span className="gradient-text-secondary">Innovation</span>
+            <span>{t('featuresTitle1')}</span>
+            <span className="gradient-text-secondary">{t('featuresTitle2')}</span>
           </h2>
           <p className="features-subtitle">
-            Four pillars of our revolutionary approach to modern medicine
+            {t('featuresSubtitle')}
           </p>
         </motion.div>
 
@@ -100,6 +102,7 @@ export default function Features({ onLearnMore }) {
               feature={feature} 
               index={index}
               onLearnMore={onLearnMore}
+              learnMoreText={t('learnMore')}
             />
           ))}
         </div>

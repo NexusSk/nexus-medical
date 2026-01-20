@@ -1,11 +1,10 @@
-import { useRef, useMemo } from 'react'
+import { useRef, useMemo, memo, useEffect } from 'react'
 import { Canvas, useFrame, useThree } from '@react-three/fiber'
-import { Float, Sparkles } from '@react-three/drei'
-// Removed postprocessing for stability
+import { Float, Sparkles, AdaptiveDpr, AdaptiveEvents } from '@react-three/drei'
 import * as THREE from 'three'
 
-// Pill capsule using sphere + cylinder (compatible approach)
-function SinglePill({ position, rotation, scale = 1, color = '#00c853', speed = 1 }) {
+// Pill capsule - optimized geometry (reduced segments)
+const SinglePill = memo(function SinglePill({ position, rotation, scale = 1, color = '#00c853', speed = 1 }) {
   const groupRef = useRef()
   const time = useRef(Math.random() * 100)
 
@@ -21,35 +20,42 @@ function SinglePill({ position, rotation, scale = 1, color = '#00c853', speed = 
   const radius = 0.3
   const bodyLength = 0.6
 
+  // Memoized material to prevent recreation
+  const material = useMemo(() => (
+    <meshStandardMaterial color={color} metalness={0.5} roughness={0.2} />
+  ), [color])
+
   return (
     <group ref={groupRef} position={position} rotation={rotation} scale={scale}>
-      {/* Top hemisphere */}
+      {/* Top hemisphere - reduced segments for performance */}
       <mesh position={[0, bodyLength / 2, 0]}>
-        <sphereGeometry args={[radius, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
-        <meshStandardMaterial color={color} metalness={0.5} roughness={0.2} />
+        <sphereGeometry args={[radius, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2]} />
+        {material}
       </mesh>
-      {/* Body cylinder */}
+      {/* Body cylinder - reduced segments */}
       <mesh>
-        <cylinderGeometry args={[radius, radius, bodyLength, 32]} />
-        <meshStandardMaterial color={color} metalness={0.5} roughness={0.2} />
+        <cylinderGeometry args={[radius, radius, bodyLength, 16]} />
+        {material}
       </mesh>
-      {/* Bottom hemisphere */}
+      {/* Bottom hemisphere - reduced segments */}
       <mesh position={[0, -bodyLength / 2, 0]} rotation={[Math.PI, 0, 0]}>
-        <sphereGeometry args={[radius, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
-        <meshStandardMaterial color={color} metalness={0.5} roughness={0.2} />
+        <sphereGeometry args={[radius, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2]} />
+        {material}
       </mesh>
     </group>
   )
-}
+})
 
-// DNA Helix
-function DNAHelix({ position = [0, 0, 0], scale = 1 }) {
+// DNA Helix - optimized with reduced segments
+const DNAHelix = memo(function DNAHelix({ position = [0, 0, 0], scale = 1 }) {
   const groupRef = useRef()
+  
+  // Reduced segments for better performance
   const helixPoints = useMemo(() => {
     const points1 = []
     const points2 = []
     const connectors = []
-    const segments = 60
+    const segments = 40 // Reduced from 60
     
     for (let i = 0; i < segments; i++) {
       const t = i / segments
@@ -69,7 +75,7 @@ function DNAHelix({ position = [0, 0, 0], scale = 1 }) {
         Math.sin(angle + Math.PI) * radius
       ))
       
-      if (i % 4 === 0) {
+      if (i % 5 === 0) { // Reduced connector frequency
         connectors.push({
           start: points1[points1.length - 1].clone(),
           end: points2[points2.length - 1].clone()
@@ -89,52 +95,53 @@ function DNAHelix({ position = [0, 0, 0], scale = 1 }) {
   const curve1 = useMemo(() => new THREE.CatmullRomCurve3(helixPoints.points1), [helixPoints])
   const curve2 = useMemo(() => new THREE.CatmullRomCurve3(helixPoints.points2), [helixPoints])
 
+  // Memoized connector components
+  const connectorElements = useMemo(() => helixPoints.connectors.map((connector, i) => {
+    const midPoint = connector.start.clone().add(connector.end).multiplyScalar(0.5)
+    const direction = connector.end.clone().sub(connector.start)
+    const length = direction.length()
+    const quaternion = new THREE.Quaternion().setFromUnitVectors(
+      new THREE.Vector3(0, 1, 0),
+      direction.normalize()
+    )
+    
+    return (
+      <group key={i}>
+        <mesh position={midPoint.toArray()} quaternion={quaternion}>
+          <cylinderGeometry args={[0.03, 0.03, length, 6]} />
+          <meshStandardMaterial color="#a7f3d0" opacity={0.8} transparent />
+        </mesh>
+        <mesh position={connector.start.toArray()}>
+          <sphereGeometry args={[0.1, 8, 8]} />
+          <meshStandardMaterial color="#5efc82" emissive="#5efc82" emissiveIntensity={0.15} />
+        </mesh>
+        <mesh position={connector.end.toArray()}>
+          <sphereGeometry args={[0.1, 8, 8]} />
+          <meshStandardMaterial color="#009624" emissive="#009624" emissiveIntensity={0.15} />
+        </mesh>
+      </group>
+    )
+  }), [helixPoints])
+
   return (
     <group ref={groupRef} position={position} scale={scale}>
-      {/* Helix strand 1 */}
+      {/* Helix strand 1 - reduced tubular segments */}
       <mesh>
-        <tubeGeometry args={[curve1, 100, 0.08, 12, false]} />
+        <tubeGeometry args={[curve1, 60, 0.08, 8, false]} />
         <meshStandardMaterial color="#00c853" emissive="#00c853" emissiveIntensity={0.2} metalness={0.3} roughness={0.4} />
       </mesh>
-      {/* Helix strand 2 */}
+      {/* Helix strand 2 - reduced tubular segments */}
       <mesh>
-        <tubeGeometry args={[curve2, 100, 0.08, 12, false]} />
+        <tubeGeometry args={[curve2, 60, 0.08, 8, false]} />
         <meshStandardMaterial color="#10b981" emissive="#10b981" emissiveIntensity={0.2} metalness={0.3} roughness={0.4} />
       </mesh>
-      {/* Base pair connectors */}
-      {helixPoints.connectors.map((connector, i) => {
-        const midPoint = connector.start.clone().add(connector.end).multiplyScalar(0.5)
-        const direction = connector.end.clone().sub(connector.start)
-        const length = direction.length()
-        
-        return (
-          <group key={i}>
-            {/* Connector line */}
-            <mesh position={midPoint.toArray()} quaternion={new THREE.Quaternion().setFromUnitVectors(
-              new THREE.Vector3(0, 1, 0),
-              direction.normalize()
-            )}>
-              <cylinderGeometry args={[0.03, 0.03, length, 8]} />
-              <meshStandardMaterial color="#a7f3d0" opacity={0.8} transparent />
-            </mesh>
-            {/* Base spheres */}
-            <mesh position={connector.start.toArray()}>
-              <sphereGeometry args={[0.1, 16, 16]} />
-              <meshStandardMaterial color="#5efc82" emissive="#5efc82" emissiveIntensity={0.15} />
-            </mesh>
-            <mesh position={connector.end.toArray()}>
-              <sphereGeometry args={[0.1, 16, 16]} />
-              <meshStandardMaterial color="#009624" emissive="#009624" emissiveIntensity={0.15} />
-            </mesh>
-          </group>
-        )
-      })}
+      {connectorElements}
     </group>
   )
-}
+})
 
-// Molecule structure
-function Molecule({ position, scale = 1 }) {
+// Molecule structure - optimized
+const Molecule = memo(function Molecule({ position, scale = 1 }) {
   const groupRef = useRef()
 
   useFrame((state) => {
@@ -153,20 +160,42 @@ function Molecule({ position, scale = 1 }) {
     { pos: [0, 0, -0.9], size: 0.28, color: '#00c853' },
   ], [])
 
-  const bonds = useMemo(() => [
-    { from: 0, to: 1 },
-    { from: 0, to: 2 },
-    { from: 0, to: 3 },
-    { from: 0, to: 4 },
-    { from: 0, to: 5 },
-  ], [])
+  // Pre-compute bond data
+  const bondElements = useMemo(() => {
+    const bonds = [
+      { from: 0, to: 1 },
+      { from: 0, to: 2 },
+      { from: 0, to: 3 },
+      { from: 0, to: 4 },
+      { from: 0, to: 5 },
+    ]
+    
+    return bonds.map((bond, i) => {
+      const start = new THREE.Vector3(...atoms[bond.from].pos)
+      const end = new THREE.Vector3(...atoms[bond.to].pos)
+      const mid = start.clone().add(end).multiplyScalar(0.5)
+      const direction = end.clone().sub(start)
+      const length = direction.length()
+      const quaternion = new THREE.Quaternion().setFromUnitVectors(
+        new THREE.Vector3(0, 1, 0),
+        direction.normalize()
+      )
+      
+      return (
+        <mesh key={i} position={mid.toArray()} quaternion={quaternion}>
+          <cylinderGeometry args={[0.05, 0.05, length, 6]} />
+          <meshStandardMaterial color="#e0e0e0" opacity={0.7} transparent />
+        </mesh>
+      )
+    })
+  }, [atoms])
 
   return (
     <group ref={groupRef} position={position} scale={scale}>
       {atoms.map((atom, i) => (
-        <Float key={i} speed={2} rotationIntensity={0.3} floatIntensity={0.3}>
+        <Float key={i} speed={2} rotationIntensity={0.2} floatIntensity={0.2}>
           <mesh position={atom.pos}>
-            <sphereGeometry args={[atom.size, 32, 32]} />
+            <sphereGeometry args={[atom.size, 16, 16]} />
             <meshStandardMaterial 
               color={atom.color} 
               emissive={atom.color} 
@@ -177,33 +206,13 @@ function Molecule({ position, scale = 1 }) {
           </mesh>
         </Float>
       ))}
-      {bonds.map((bond, i) => {
-        const start = new THREE.Vector3(...atoms[bond.from].pos)
-        const end = new THREE.Vector3(...atoms[bond.to].pos)
-        const mid = start.clone().add(end).multiplyScalar(0.5)
-        const direction = end.clone().sub(start)
-        const length = direction.length()
-        
-        return (
-          <mesh 
-            key={i} 
-            position={mid.toArray()} 
-            quaternion={new THREE.Quaternion().setFromUnitVectors(
-              new THREE.Vector3(0, 1, 0),
-              direction.normalize()
-            )}
-          >
-            <cylinderGeometry args={[0.05, 0.05, length, 8]} />
-            <meshStandardMaterial color="#e0e0e0" opacity={0.7} transparent />
-          </mesh>
-        )
-      })}
+      {bondElements}
     </group>
   )
-}
+})
 
-// Floating orb
-function GlassOrb({ position, scale = 1, color = "#a7f3d0" }) {
+// Floating orb - optimized
+const GlassOrb = memo(function GlassOrb({ position, scale = 1, color = "#a7f3d0" }) {
   const meshRef = useRef()
 
   useFrame((state) => {
@@ -213,9 +222,9 @@ function GlassOrb({ position, scale = 1, color = "#a7f3d0" }) {
   })
 
   return (
-    <Float speed={1.5} rotationIntensity={1} floatIntensity={0.5}>
+    <Float speed={1.5} rotationIntensity={0.5} floatIntensity={0.3}>
       <mesh ref={meshRef} position={position} scale={scale}>
-        <sphereGeometry args={[0.5, 64, 64]} />
+        <sphereGeometry args={[0.5, 24, 24]} />
         <meshStandardMaterial
           color={color}
           transparent
@@ -226,38 +235,47 @@ function GlassOrb({ position, scale = 1, color = "#a7f3d0" }) {
       </mesh>
     </Float>
   )
-}
+})
 
-// Particle field
-function ParticleField() {
+// Particle field - reduced count for performance
+const ParticleField = memo(function ParticleField() {
   return (
     <Sparkles
-      count={100}
+      count={60}
       scale={30}
-      size={1.2}
-      speed={0.15}
-      opacity={0.3}
+      size={1.0}
+      speed={0.1}
+      opacity={0.25}
       color="#00c853"
     />
   )
+})
+
+// Global refs to persist smooth values across re-renders (prevents 360 spin on language change)
+const smoothState = {
+  progress: 0,
+  velocity: 0
 }
 
-// Camera controller that responds to scroll
-function CameraController({ scrollProgress }) {
+// Camera controller that responds to scroll with ultra-smooth interpolation
+// Reads directly from smoothState to always get current values
+function CameraController() {
   const { camera } = useThree()
   
   useFrame(() => {
-    const progress = Math.max(0, Math.min(1, scrollProgress || 0))
+    // Read directly from global state on each frame
+    const smoothProgress = smoothState.progress
+    const smoothVelocity = smoothState.velocity
     
-    // Smooth zoom in and orbit effect
-    const targetZ = 14 - progress * 6
-    const targetX = Math.sin(progress * Math.PI) * 5
-    const targetY = Math.cos(progress * Math.PI * 0.5) * 2
+    // Reduced camera movement range for smoother feel
+    const targetZ = 14 - smoothProgress * 3
+    const targetX = Math.sin(smoothProgress * Math.PI * 0.3) * 2 + smoothVelocity * 0.2
+    const targetY = Math.cos(smoothProgress * Math.PI * 0.15) * 1 + smoothVelocity * 0.05
     
-    // Smooth interpolation
-    camera.position.x += (targetX - camera.position.x) * 0.02
-    camera.position.y += (targetY - camera.position.y) * 0.02
-    camera.position.z += (targetZ - camera.position.z) * 0.02
+    // Ultra-smooth interpolation
+    camera.position.x += (targetX - camera.position.x) * 0.01
+    camera.position.y += (targetY - camera.position.y) * 0.01
+    camera.position.z += (targetZ - camera.position.z) * 0.01
     
     camera.lookAt(0, 0, 0)
   })
@@ -265,28 +283,41 @@ function CameraController({ scrollProgress }) {
   return null
 }
 
-// Main 3D Scene
-function Scene({ scrollProgress = 0 }) {
+// Main 3D Scene - reads directly from smoothState for always-current values
+function Scene() {
   const groupRef = useRef()
 
   useFrame((state) => {
     if (groupRef.current) {
-      // Gentle continuous rotation
-      groupRef.current.rotation.y = state.clock.elapsedTime * 0.05 + scrollProgress * Math.PI * 0.5
+      // Read directly from global state on each frame
+      const smoothProgress = smoothState.progress
+      const smoothVelocity = smoothState.velocity
+      
+      // Gentle continuous rotation - reduced scroll influence to prevent spinning
+      const baseRotation = state.clock.elapsedTime * 0.05
+      // Only 15% of a full rotation (about 27 degrees) across the entire page
+      const scrollRotation = smoothProgress * Math.PI * 0.15
+      // Very subtle velocity boost
+      const velocityBoost = smoothVelocity * 0.03
+      
+      groupRef.current.rotation.y = baseRotation + scrollRotation + velocityBoost
+      
+      // Subtle floating motion
+      groupRef.current.position.y = Math.sin(state.clock.elapsedTime * 0.3) * 0.1 + smoothVelocity * 0.02
     }
   })
 
   return (
     <>
-      <color attach="background" args={['#ffffff']} />
-      <fog attach="fog" args={['#ffffff', 15, 50]} />
+      <color attach="background" args={['#000000']} />
+      <fog attach="fog" args={['#000000', 15, 50]} />
       
       <ambientLight intensity={1.2} />
       <directionalLight position={[10, 10, 5]} intensity={1} color="#ffffff" />
       <directionalLight position={[-10, -10, -5]} intensity={0.5} color="#ffffff" />
       <directionalLight position={[0, 10, 10]} intensity={0.3} color="#ffffff" />
       
-      <CameraController scrollProgress={scrollProgress} />
+      <CameraController />
       
       <group ref={groupRef}>
         {/* Central DNA - main focus */}
@@ -320,23 +351,64 @@ function Scene({ scrollProgress = 0 }) {
   )
 }
 
-export default function Scene3D({ scrollProgress = 0 }) {
+// Memoized main component with smooth interpolation at the top level
+const Scene3D = memo(function Scene3D({ scrollProgress = 0, scrollVelocity = 0 }) {
+  const smoothProgressRef = useRef(smoothState.progress)
+  const smoothVelocityRef = useRef(smoothState.velocity)
+  const rafRef = useRef(null)
+  
+  // Smooth interpolation happens outside Canvas to persist across re-renders
+  useEffect(() => {
+    const animate = () => {
+      // Very slow interpolation for buttery smooth transitions
+      smoothProgressRef.current += (scrollProgress - smoothProgressRef.current) * 0.008
+      smoothVelocityRef.current += (scrollVelocity - smoothVelocityRef.current) * 0.02
+      
+      // Store in global state to persist across remounts
+      smoothState.progress = smoothProgressRef.current
+      smoothState.velocity = smoothVelocityRef.current
+      
+      rafRef.current = requestAnimationFrame(animate)
+    }
+    
+    rafRef.current = requestAnimationFrame(animate)
+    
+    return () => {
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current)
+      }
+    }
+  }, [scrollProgress, scrollVelocity])
+  
   return (
     <div className="canvas-container interactive">
       <Canvas
         camera={{ position: [0, 0, 14], fov: 50 }}
-        dpr={[1, 1.5]}
+        dpr={[1, 2]}
         gl={{ 
           antialias: true,
           alpha: false,
-          powerPreference: "high-performance"
+          powerPreference: "high-performance",
+          stencil: false,
+          depth: true,
         }}
         onCreated={({ gl }) => {
-          gl.setClearColor('#ffffff')
+          gl.setClearColor('#000000')
         }}
+        frameloop="always"
       >
-        <Scene scrollProgress={scrollProgress} />
+        {/* Adaptive performance */}
+        <AdaptiveDpr pixelated />
+        <AdaptiveEvents />
+        <SceneWithSmoothState />
       </Canvas>
     </div>
   )
+})
+
+// Inner component that renders the scene
+function SceneWithSmoothState() {
+  return <Scene />
 }
+
+export default Scene3D

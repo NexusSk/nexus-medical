@@ -1,11 +1,13 @@
 import { motion, useInView, useScroll, useTransform } from 'framer-motion'
 import { useRef } from 'react'
+import { useLanguage } from '../context/LanguageContext'
 import './About.css'
 
 export default function About({ onShowStory }) {
   const sectionRef = useRef(null)
   const titleRef = useRef(null)
   const isInView = useInView(titleRef, { once: true, margin: '-100px' })
+  const { t } = useLanguage()
   
   const { scrollYProgress } = useScroll({
     target: sectionRef,
@@ -25,41 +27,37 @@ export default function About({ onShowStory }) {
             animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: -50 }}
             transition={{ duration: 0.8 }}
           >
-            <span className="section-label">// About Us</span>
+            <span className="section-label">{t('aboutSectionLabel')}</span>
             <h2 className="about-title">
-              Redefining What's
-              <span className="gradient-text"> Possible</span>
+              {t('aboutTitle1')}
+              <span className="gradient-text"> {t('aboutTitle2')}</span>
             </h2>
             <p className="about-description">
-              Founded in 2020, we've assembled a world-class team of scientists, 
-              engineers, and healthcare visionaries united by a single mission: 
-              to transform how humanity fights disease.
+              {t('aboutDesc1')}
             </p>
             <p className="about-description">
-              Our proprietary platform combines quantum computing, advanced AI, 
-              and cutting-edge biotechnology to accelerate drug discovery from 
-              years to months.
+              {t('aboutDesc2')}
             </p>
 
             <div className="about-highlights">
               <div className="highlight">
                 <div className="highlight-icon">⬡</div>
                 <div className="highlight-content">
-                  <h4>FDA Fast Track</h4>
-                  <p>3 treatments in accelerated approval pipeline</p>
+                  <h4>{t('aboutFdaTitle')}</h4>
+                  <p>{t('aboutFdaDesc')}</p>
                 </div>
               </div>
               <div className="highlight">
                 <div className="highlight-icon">◈</div>
                 <div className="highlight-content">
-                  <h4>Global Reach</h4>
-                  <p>Operations across 24 countries worldwide</p>
+                  <h4>{t('aboutGlobalTitle')}</h4>
+                  <p>{t('aboutGlobalDesc')}</p>
                 </div>
               </div>
             </div>
 
             <button className="btn btn-primary" onClick={onShowStory}>
-              Our Story
+              {t('ourStory')}
             </button>
           </motion.div>
 
@@ -76,19 +74,19 @@ export default function About({ onShowStory }) {
               <div className="visual-content">
                 <div className="stat-block">
                   <span className="stat-value">2024</span>
-                  <span className="stat-desc">Founded</span>
+                  <span className="stat-desc">{t('founded')}</span>
                 </div>
                 <div className="stat-block">
                   <span className="stat-value">500+</span>
-                  <span className="stat-desc">Scientists</span>
+                  <span className="stat-desc">{t('scientists')}</span>
                 </div>
                 <div className="stat-block">
                   <span className="stat-value">$2.1B</span>
-                  <span className="stat-desc">Funding</span>
+                  <span className="stat-desc">{t('funding')}</span>
                 </div>
                 <div className="stat-block">
                   <span className="stat-value">15</span>
-                  <span className="stat-desc">Patents</span>
+                  <span className="stat-desc">{t('patents')}</span>
                 </div>
               </div>
 
@@ -110,7 +108,7 @@ export default function About({ onShowStory }) {
               }}
             >
               <span>🧬</span>
-              <span>Next-Gen<br/>Biotech</span>
+              <span style={{ whiteSpace: 'pre-line' }}>{t('nextGenBiotech')}</span>
             </motion.div>
           </motion.div>
         </div>

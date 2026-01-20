@@ -5,11 +5,13 @@
   right: 0;
   z-index: 100;
   padding: 20px 40px;
-  transition: all 0.4s ease;
+  transition: background-color 0.3s ease, padding 0.3s ease, backdrop-filter 0.3s ease;
+  will-change: background-color, padding;
+  contain: layout;
 }
 
 .navbar.scrolled {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(0, 0, 0, 0.9);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(0, 200, 83, 0.15);
   padding: 15px 40px;
@@ -100,7 +102,35 @@
 .nav-actions {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
+}
+
+.btn-lang {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 8px 14px;
+  background: transparent;
+  border: 1px solid rgba(0, 200, 83, 0.5);
+  color: var(--accent-green);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.btn-lang:hover {
+  background: rgba(0, 200, 83, 0.1);
+  border-color: var(--accent-green);
+}
+
+.mobile-lang {
+  width: 100%;
+  padding: 15px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  text-align: center;
 }
 
 .btn-nav {
@@ -120,7 +150,7 @@
 
 .btn-nav:hover {
   background: var(--accent-green);
-  color: white;
+  color: #000000;
 }
 
 .mobile-toggle {
@@ -182,7 +212,7 @@
   bottom: 0;
   width: 100%;
   max-width: 400px;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(0, 0, 0, 0.95);
   backdrop-filter: blur(20px);
   z-index: 99;
   padding: 120px 40px 40px;

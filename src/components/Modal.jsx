@@ -1,4 +1,5 @@
 import { motion, AnimatePresence } from 'framer-motion'
+import { useLanguage } from '../context/LanguageContext'
 import './Modal.css'
 
 export default function Modal({ isOpen, onClose, title, children }) {
@@ -11,27 +12,30 @@ export default function Modal({ isOpen, onClose, title, children }) {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
             onClick={onClose}
           />
-          <motion.div
-            className="modal"
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          >
-            <div className="modal-header">
-              <h3 className="modal-title">{title}</h3>
-              <button className="modal-close" onClick={onClose} aria-label="Close">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M18 6L6 18M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
-            <div className="modal-content">
-              {children}
-            </div>
-          </motion.div>
+          <div className="modal-wrapper">
+            <motion.div
+              className="modal"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+            >
+              <div className="modal-header">
+                <h3 className="modal-title">{title}</h3>
+                <button className="modal-close" onClick={onClose} aria-label="Close">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <div className="modal-content">
+                {children}
+              </div>
+            </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>
@@ -40,6 +44,8 @@ export default function Modal({ isOpen, onClose, title, children }) {
 
 // Demo Modal Content
 export function DemoContent() {
+  const { t } = useLanguage()
+  
   return (
     <div className="demo-content">
       <div className="demo-video">
@@ -49,25 +55,24 @@ export function DemoContent() {
               <path d="M8 5v14l11-7z" />
             </svg>
           </div>
-          <p>Product Demo Video</p>
+          <p>{t('demoVideoPlaceholder')}</p>
         </div>
       </div>
       <p className="demo-description">
-        Experience our revolutionary AI-driven drug discovery platform in action. 
-        See how we're accelerating the path from lab to patient.
+        {t('demoDescription')}
       </p>
       <div className="demo-features">
         <div className="demo-feature">
           <span className="feature-icon">🧬</span>
-          <span>AI Molecule Design</span>
+          <span>{t('demoFeature1')}</span>
         </div>
         <div className="demo-feature">
           <span className="feature-icon">⚡</span>
-          <span>10x Faster Discovery</span>
+          <span>{t('demoFeature2')}</span>
         </div>
         <div className="demo-feature">
           <span className="feature-icon">🎯</span>
-          <span>Precision Targeting</span>
+          <span>{t('demoFeature3')}</span>
         </div>
       </div>
     </div>
@@ -76,6 +81,8 @@ export function DemoContent() {
 
 // Contact Form Modal Content
 export function ContactFormContent({ onSubmit }) {
+  const { t } = useLanguage()
+  
   const handleSubmit = (e) => {
     e.preventDefault()
     onSubmit?.()
@@ -85,24 +92,24 @@ export function ContactFormContent({ onSubmit }) {
     <form className="contact-form" onSubmit={handleSubmit}>
       <div className="form-row">
         <div className="form-group">
-          <label htmlFor="name">Name</label>
-          <input type="text" id="name" placeholder="Your name" required />
+          <label htmlFor="name">{t('formName')}</label>
+          <input type="text" id="name" placeholder={t('formNamePlaceholder')} required />
         </div>
         <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input type="email" id="email" placeholder="your@email.com" required />
+          <label htmlFor="email">{t('formEmail')}</label>
+          <input type="email" id="email" placeholder={t('formEmailPlaceholder')} required />
         </div>
       </div>
       <div className="form-group">
-        <label htmlFor="company">Company</label>
-        <input type="text" id="company" placeholder="Your company" />
+        <label htmlFor="company">{t('formCompany')}</label>
+        <input type="text" id="company" placeholder={t('formCompanyPlaceholder')} />
       </div>
       <div className="form-group">
-        <label htmlFor="message">Message</label>
-        <textarea id="message" rows="4" placeholder="Tell us about your needs..." required></textarea>
+        <label htmlFor="message">{t('formMessage')}</label>
+        <textarea id="message" rows="4" placeholder={t('formMessagePlaceholder')} required></textarea>
       </div>
       <button type="submit" className="btn btn-primary btn-full">
-        Send Message
+        {t('formSend')}
       </button>
     </form>
   )
@@ -110,6 +117,8 @@ export function ContactFormContent({ onSubmit }) {
 
 // Success Modal Content
 export function SuccessContent({ message, onClose }) {
+  const { t } = useLanguage()
+  
   return (
     <div className="success-content">
       <div className="success-icon">
@@ -118,10 +127,10 @@ export function SuccessContent({ message, onClose }) {
           <path d="M22 4L12 14.01l-3-3" />
         </svg>
       </div>
-      <h4>Thank You!</h4>
-      <p>{message || "We've received your message and will get back to you within 24 hours."}</p>
+      <h4>{t('successThankYou')}</h4>
+      <p>{message || t('successMessage')}</p>
       <button className="btn btn-primary" onClick={onClose}>
-        Got it
+        {t('successGotIt')}
       </button>
     </div>
   )
@@ -129,35 +138,37 @@ export function SuccessContent({ message, onClose }) {
 
 // Story Modal Content
 export function StoryContent() {
+  const { t } = useLanguage()
+  
   return (
     <div className="story-content">
       <div className="story-timeline">
         <div className="timeline-item">
-          <span className="timeline-year">2020</span>
+          <span className="timeline-year">{t('storyYear2020')}</span>
           <div className="timeline-content">
-            <h4>The Beginning</h4>
-            <p>Founded by a team of Stanford researchers and biotech veterans with a vision to revolutionize drug discovery.</p>
+            <h4>{t('storyTitle2020')}</h4>
+            <p>{t('storyDesc2020')}</p>
           </div>
         </div>
         <div className="timeline-item">
-          <span className="timeline-year">2022</span>
+          <span className="timeline-year">{t('storyYear2022')}</span>
           <div className="timeline-content">
-            <h4>Breakthrough</h4>
-            <p>Our AI platform successfully identified 3 novel drug candidates, reducing discovery time by 80%.</p>
+            <h4>{t('storyTitle2022')}</h4>
+            <p>{t('storyDesc2022')}</p>
           </div>
         </div>
         <div className="timeline-item">
-          <span className="timeline-year">2024</span>
+          <span className="timeline-year">{t('storyYear2024')}</span>
           <div className="timeline-content">
-            <h4>FDA Recognition</h4>
-            <p>Received FDA Fast Track designation for our lead oncology treatment program.</p>
+            <h4>{t('storyTitle2024')}</h4>
+            <p>{t('storyDesc2024')}</p>
           </div>
         </div>
         <div className="timeline-item">
-          <span className="timeline-year">2026</span>
+          <span className="timeline-year">{t('storyYear2026')}</span>
           <div className="timeline-content">
-            <h4>Global Impact</h4>
-            <p>Expanded to 24 countries, partnering with leading healthcare institutions worldwide.</p>
+            <h4>{t('storyTitle2026')}</h4>
+            <p>{t('storyDesc2026')}</p>
           </div>
         </div>
       </div>

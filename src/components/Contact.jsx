@@ -1,10 +1,12 @@
 import { motion, useInView } from 'framer-motion'
 import { useRef } from 'react'
+import { useLanguage } from '../context/LanguageContext'
 import './Contact.css'
 
 export default function Contact({ onScheduleCall, onPartnershipInquiry }) {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: '-100px' })
+  const { t } = useLanguage()
 
   return (
     <section className="contact" id="contact" ref={ref}>
@@ -20,15 +22,14 @@ export default function Contact({ onScheduleCall, onPartnershipInquiry }) {
           animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
           transition={{ duration: 0.8 }}
         >
-          <span className="section-label">// Get in Touch</span>
+          <span className="section-label">{t('contactSectionLabel')}</span>
           <h2 className="contact-title">
-            Ready to<br />
-            <span className="gradient-text">Transform</span><br />
-            Healthcare?
+            {t('contactTitle1')}<br />
+            <span className="gradient-text">{t('contactTitle2')}</span><br />
+            {t('contactTitle3')}
           </h2>
           <p className="contact-description">
-            Join us in our mission to revolutionize medicine. Whether you're a researcher, 
-            investor, or healthcare provider, we'd love to hear from you.
+            {t('contactDescription')}
           </p>
 
           <div className="contact-cta">
@@ -36,24 +37,24 @@ export default function Contact({ onScheduleCall, onPartnershipInquiry }) {
               className="btn btn-primary btn-large"
               onClick={onScheduleCall}
             >
-              Schedule a Call
+              {t('scheduleCall')}
             </button>
             <button 
               className="btn btn-secondary btn-large"
               onClick={onPartnershipInquiry}
             >
-              Partnership Inquiry
+              {t('partnershipInquiry')}
             </button>
           </div>
 
           <div className="contact-info">
             <div className="info-item">
-              <span className="info-label">Email</span>
-              <a href="mailto:contact@medx.io" className="info-value">contact@medx.io</a>
+              <span className="info-label">{t('email')}</span>
+              <a href="mailto:contact@nexusmed.sk" className="info-value">contact@nexusmed.sk</a>
             </div>
             <div className="info-item">
-              <span className="info-label">Location</span>
-              <span className="info-value">San Francisco, CA</span>
+              <span className="info-label">{t('location')}</span>
+              <span className="info-value">{t('locationValue')}</span>
             </div>
           </div>
         </motion.div>
@@ -81,13 +82,13 @@ export default function Contact({ onScheduleCall, onPartnershipInquiry }) {
       <footer className="footer">
         <div className="footer-container">
           <div className="footer-brand">
-            <span className="footer-logo">MedX</span>
-            <p>Pioneering the future of medicine.</p>
+            <span className="footer-logo">NexusMed</span>
+            <p>{t('footerTagline')}</p>
           </div>
           <div className="footer-links">
-            <a href="#" onClick={(e) => { e.preventDefault(); alert('Privacy Policy - Coming Soon'); }}>Privacy</a>
-            <a href="#" onClick={(e) => { e.preventDefault(); alert('Terms of Service - Coming Soon'); }}>Terms</a>
-            <a href="#" onClick={(e) => { e.preventDefault(); alert('Careers Page - Coming Soon'); }}>Careers</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); alert(`${t('footerPrivacy')} - Coming Soon`); }}>{t('footerPrivacy')}</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); alert(`${t('footerTerms')} - Coming Soon`); }}>{t('footerTerms')}</a>
+            <a href="#" onClick={(e) => { e.preventDefault(); alert(`${t('footerCareers')} - Coming Soon`); }}>{t('footerCareers')}</a>
           </div>
           <div className="footer-social">
             <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
@@ -102,7 +103,7 @@ export default function Contact({ onScheduleCall, onPartnershipInquiry }) {
             </a>
           </div>
           <div className="footer-copyright">
-            <span>© 2026 MedX. All rights reserved.</span>
+            <span>{t('footerCopyright')}</span>
           </div>
         </div>
       </footer>

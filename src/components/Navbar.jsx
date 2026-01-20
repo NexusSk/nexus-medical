@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useLanguage } from '../context/LanguageContext'
 import './Navbar.css'
 
-export default function Navbar({ onGetStarted }) {
+export default function Navbar({ onGetStarted, lenisRef }) {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const { t, toggleLanguage, language } = useLanguage()
 
   useEffect(() => {
     const handleScroll = () => {
@@ -14,24 +16,39 @@ export default function Navbar({ onGetStarted }) {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Navigation items in chronological order matching the page sections
   const navItems = [
-    { name: 'About', href: 'about' },
-    { name: 'Technology', href: 'features' },
-    { name: 'Research', href: 'about' },
-    { name: 'Contact', href: 'contact' }
+    { name: t('navTechnology'), href: 'features' },
+    { name: t('navAbout'), href: 'about' },
+    { name: t('navContact'), href: 'contact' }
   ]
 
   const scrollToSection = (sectionId) => {
     const element = document.getElementById(sectionId)
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
+      // Use Lenis for smooth scrolling if available, otherwise fallback
+      if (lenisRef?.current) {
+        lenisRef.current.scrollTo(element, { 
+          duration: 2.5,
+          easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+        })
+      } else {
+        element.scrollIntoView({ behavior: 'smooth' })
+      }
     }
     setIsMobileMenuOpen(false)
   }
 
   const scrollToTop = (e) => {
     e.preventDefault()
-    window.scrollTo({ top: 0, behavior: 'smooth' })
+    if (lenisRef?.current) {
+      lenisRef.current.scrollTo(0, { 
+        duration: 2,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t))
+      })
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
   }
 
   return (
@@ -56,7 +73,7 @@ export default function Navbar({ onGetStarted }) {
                 </defs>
               </svg>
             </div>
-            <span className="logo-text">MedX</span>
+            <span className="logo-text">NexusMed</span>
           </a>
 
           <div className="nav-links">
@@ -81,6 +98,17 @@ export default function Navbar({ onGetStarted }) {
 
           <div className="nav-actions">
             <motion.button
+              className="btn-lang"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              onClick={toggleLanguage}
+              aria-label="Toggle language"
+            >
+              {language === 'sk' ? 'EN' : 'SK'}
+            </motion.button>
+
+            <motion.button
               className="btn-nav"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -90,7 +118,7 @@ export default function Navbar({ onGetStarted }) {
                 onGetStarted?.()
               }}
             >
-              Get Started
+              {t('navGetStarted')}
             </motion.button>
 
             <button
@@ -115,6 +143,16 @@ export default function Navbar({ onGetStarted }) {
             transition={{ duration: 0.4, ease: 'easeInOut' }}
           >
             <div className="mobile-menu-content">
+              <motion.button
+                className="btn-lang mobile-lang"
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4 }}
+                onClick={toggleLanguage}
+              >
+                {language === 'sk' ? 'Switch to English' : 'Prepnúť na Slovenčinu'}
+              </motion.button>
+              
               {navItems.map((item, index) => (
                 <motion.a
                   key={item.name}
@@ -122,7 +160,7 @@ export default function Navbar({ onGetStarted }) {
                   className="mobile-link"
                   initial={{ opacity: 0, x: 50 }}
                   animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
+                  transition={{ duration: 0.4, delay: (index + 1) * 0.1 }}
                   onClick={(e) => {
                     e.preventDefault()
                     scrollToSection(item.href)
@@ -136,13 +174,13 @@ export default function Navbar({ onGetStarted }) {
                 className="btn btn-primary mobile-cta"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: 0.5 }}
+                transition={{ duration: 0.4, delay: 0.6 }}
                 onClick={() => {
                   scrollToSection('contact')
                   onGetStarted?.()
                 }}
               >
-                Get Started
+                {t('navGetStarted')}
               </motion.button>
             </div>
           </motion.div>

@@ -52,7 +52,7 @@
   align-items: center;
   gap: 15px;
   padding: 30px 40px;
-  background: rgba(255, 255, 255, 0.7);
+  background: rgba(10, 10, 10, 0.8);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(0, 200, 83, 0.15);
   transition: all 0.3s ease;
@@ -60,7 +60,7 @@
 }
 
 .highlight:hover {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(15, 15, 15, 0.95);
   border-color: var(--accent-green);
 }
 
@@ -89,7 +89,7 @@
 
 .visual-frame {
   position: relative;
-  background: rgba(255, 255, 255, 0.6);
+  background: rgba(10, 10, 10, 0.7);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(0, 200, 83, 0.2);
   padding: 60px;
@@ -145,7 +145,7 @@
 .stat-block {
   text-align: center;
   padding: 30px;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(15, 15, 15, 0.9);
   border: 1px solid rgba(0, 200, 83, 0.15);
   transition: all 0.3s ease;
 }
